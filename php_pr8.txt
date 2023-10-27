@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Employee Management</title>
+ <link rel="stylesheet" 
+href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container">
+<?php
+// Database configuration
+$dbHost = 'localhost';
+$dbUser = 'root';
+$dbPass = '';
+$dbName = 'pr8';
+// Create a database connection
+$conn = new mysqli($dbHost, $dbUser, $dbPass, $dbName);
+if ($conn->connect_error) {
+ die("Connection failed: " . $conn->connect_error);
+}
+// CREATE Operation
+if (isset($_POST['create'])) {
+ $name = $_POST['name'];
+ $salary = $_POST['salary'];
+ $manager = $_POST['manager'];
+ $sql = "INSERT INTO Employee (Employee_Name, Employee_Salary, 
+Employee_Manager) VALUES ('$name', '$salary', '$manager')";
+
+ if ($conn->query($sql) === TRUE) {
+ echo "Record created successfully";
+ } else {
+ echo "Error: " . $sql . "<br>" . $conn->error;
+ }
+}
+// READ Operation
+$result = $conn->query("SELECT * FROM Employee");
+// UPDATE Operation
+if (isset($_POST['update'])) {
+ $id = $_POST['id'];
+ $newSalary = $_POST['new_salary'];
+ $sql = "UPDATE Employee SET Employee_Salary='$newSalary' WHERE 
+Employee_id='$id'";
+ if ($conn->query($sql) === TRUE) {
+ echo "Record updated successfully";
+ } else {
+ echo "Error updating record: " . $conn->error;
+ }
+}
+// DELETE Operation
+if (isset($_POST['delete'])) {
+ $id = $_POST['id'];
+ $sql = "DELETE FROM Employee WHERE Employee_id='$id'";
+ if ($conn->query($sql) === TRUE) {
+ echo "Record deleted successfully";
+
+ } else {
+ echo "Error deleting record: " . $conn->error;
+ }
+}
+?>
+<!-- Display Employee Data -->
+<table class="table table-bordered table-striped">
+ <thead>
+ <tr>
+ <th>ID</th>
+ <th>Name</th>
+ <th>Salary</th>
+ <th>Manager</th>
+ </tr>
+ </thead>
+ <tbody>
+ <?php while ($row = $result->fetch_assoc()) { ?>
+ <tr>
+ <td><?php echo $row['Employee_id']; ?></td>
+ <td><?php echo $row['Employee_Name']; ?></td>
+ <td><?php echo $row['Employee_Salary']; ?></td>
+ <td><?php echo $row['Employee_Manager']; ?></td>
+ </tr>
+ <?php } ?>
+ </tbody>
+</table>
+<!-- HTML Form for CREATE -->
+
+<form method="post" class="form-inline">
+ <div class="form-group">
+ <input type="text" class="form-control" name="name" placeholder="Employee 
+Name">
+ </div>
+ <div class="form-group">
+ <input type="text" class="form-control" name="salary" placeholder="Salary">
+ </div>
+ <div class="form-group">
+ <input type="text" class="form-control" name="manager" placeholder="Manager 
+(Employee ID)">
+ </div>
+ <button type="submit" class="btn btn-primary" name="create">Create</button>
+</form>
+<br>
+<br>
+<!-- HTML Form for UPDATE -->
+<form method="post" class="form-inline">
+ <div class="form-group">
+ <input type="text" class="form-control" name="id" placeholder="Employee ID">
+ </div>
+ <div class="form-group">
+ <input type="text" class="form-control" name="new_salary" placeholder="New 
+Salary">
+ </div>
+ <button type="submit" class="btn btn-warning" name="update">Update</button>
+</form>
+<br>
+<br>
+<!-- HTML Form for DELETE -->
+<form method="post" class="form-inline">
+TB70
+ <div class="form-group">
+ <input type="text" class="form-control" name="id" placeholder="Employee ID">
+ </div>
+ <button type="submit" class="btn btn-danger" name="delete">Delete</button>
+</form>
+<?php
+$conn->close();
+?>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
